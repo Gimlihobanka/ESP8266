@@ -72,6 +72,7 @@ void setup() {
 void loop() {
   senzoryDS.requestTemperatures();
   Serial.print("Teplota cidla DS18B20: ");
+  int teplota = senzoryDS.getTempCByIndex(0);
   Serial.print(senzoryDS.getTempCByIndex(0));
   Serial.println(" stupnu Celsia");
   /* 
@@ -94,7 +95,18 @@ void loop() {
     //UDP.beginPacket(UDP.remoteIP(), UDP.remotePort());
     UDP.beginPacket(iplox, 515);
     //UDP.write(reply);
-    UDP.write(reply1);
+    //char numstr[30]; // enough to hold all numbers up to 64-bits
+    //reply = reply1 + itoa(teplota, numstr, 10);
+
+
+
+    //char numstr[34]; // enough to hold all numbers up to 64-bits
+    //sprintf(numstr, "%d", teplota);
+    //reply = reply1 + numstr; 
+
+
+
+    UDP.write(reply);
     UDP.endPacket();
 
     delay(5000);
