@@ -83,6 +83,7 @@ void myFunction(String ID, float value) {
   //Serial.println(outputStr); // This gives me what I expect
   outputStr.toCharArray(outputChar, outputStr.length()+1);
   //Serial.print("outputChar: "); 
+  Serial.print("Sending to UDP > ");
   Serial.println(outputChar); // This yields the same as above, as expected
 }
 
@@ -108,20 +109,20 @@ void loop() {
     Serial.print("Packet received: ");
     Serial.println(packet);
     */
-
+  //delay(5000);
   String ID = "ESP1_Temp1=";
   float value = senzoryDS.getTempCByIndex(0);
   myFunction(ID, value);
-
+  
     // Send return packet
     //UDP.beginPacket(UDP.remoteIP(), UDP.remotePort());
   UDP.beginPacket(iplox, 515);
   UDP.write(outputChar);
   UDP.endPacket();
 
-  Serial.println("To DeepSleep 60sec");
-  //delay(10000);
-  ESP.deepSleep(60e6, RF_DEFAULT);
+  delay(1000);
+  Serial.println("To DeepSleep 15sec");
+  ESP.deepSleep(300e6);
   //}
  
 }
