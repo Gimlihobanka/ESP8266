@@ -11,11 +11,13 @@
 #define WIFI_PASS "greenballoon560"
 #define UDP_PORT 515
 
+
+
 // UDP
 WiFiUDP UDP;
 char packet[255];
 char reply[] = "Packet received!";
-char reply1[] = "ESP_Easy_DS1TEMP_Temperature=41.5";
+char outputChar[128];
 IPAddress iplox(192, 168, 1, 12);
 
 // Set your Gateway IP address
@@ -31,6 +33,11 @@ OneWire oneWireDS(pinCidlaDS);
 DallasTemperature senzoryDS(&oneWireDS);
    
 void setup() {
+
+  delay(100);
+
+  //pinMode(0, OUTPUT);    // sets the digital pin 13 as output
+  //digitalWrite(0, HIGH);
   // Setup serial port
   Serial.begin(9600);
   Serial.println("Serial begin");
@@ -68,18 +75,28 @@ void setup() {
 */
    
 }
-   
+
+
+void myFunction(String ID, float value) {
+  String outputStr = "UDP_" + ID + value;
+  //Serial.print("outputStr: "); 
+  //Serial.println(outputStr); // This gives me what I expect
+  outputStr.toCharArray(outputChar, outputStr.length()+1);
+  //Serial.print("outputChar: "); 
+  Serial.println(outputChar); // This yields the same as above, as expected
+}
+
 void loop() {
   senzoryDS.requestTemperatures();
   Serial.print("Teplota cidla DS18B20: ");
   int teplota = senzoryDS.getTempCByIndex(0);
   Serial.print(senzoryDS.getTempCByIndex(0));
-  Serial.println(" stupnu Celsia");
+  Serial.println("°C");
   /* 
   // If packet received...
   int packetSize = UDP.parsePacket();
   if (packetSize) {
-
+  
     
     Serial.print("Received packet! Size: ");
     Serial.println(packetSize);
@@ -91,26 +108,20 @@ void loop() {
     Serial.print("Packet received: ");
     Serial.println(packet);
     */
+
+  String ID = "ESP1_Temp1=";
+  float value = senzoryDS.getTempCByIndex(0);
+  myFunction(ID, value);
+
     // Send return packet
     //UDP.beginPacket(UDP.remoteIP(), UDP.remotePort());
-    UDP.beginPacket(iplox, 515);
-    //UDP.write(reply);
-    //char numstr[30]; // enough to hold all numbers up to 64-bits
-    //reply = reply1 + itoa(teplota, numstr, 10);
+  UDP.beginPacket(iplox, 515);
+  UDP.write(outputChar);
+  UDP.endPacket();
 
-
-
-    //char numstr[34]; // enough to hold all numbers up to 64-bits
-    //sprintf(numstr, "%d", teplota);
-    //reply = reply1 + numstr; 
-
-
-
-    UDP.write(reply);
-    UDP.endPacket();
-
-    delay(5000);
-    //ESP.deepSleep(10e6, RF_DEFAULT);
+  Serial.println("To DeepSleep 60sec");
+  //delay(10000);
+  ESP.deepSleep(60e6, RF_DEFAULT);
   //}
  
 }
