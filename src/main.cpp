@@ -121,8 +121,8 @@ void loop() {
   UDP.endPacket();
 
   delay(1000);
-  Serial.println("To DeepSleep 15sec");
-  ESP.deepSleep(300e6);
+  Serial.println("To DeepSleep 15 min");
+  ESP.deepSleep(900e6);
   //}
  
 }
